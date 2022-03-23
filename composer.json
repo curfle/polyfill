@@ -1,0 +1,41 @@
+{
+  "name": "curfle/polyfill",
+  "type": "library",
+  "description": "A collection of useful tools for augmenting existing php frameworks, libraries and projects.",
+  "homepage": "https://github.com/curfle/polyfill",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "joon",
+      "email": "info@joonlabs.com"
+    }
+  ],
+  "keywords": [
+    "php",
+    "curfle",
+    "polyfill"
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "phpbench/phpbench": "^1.2"
+  },
+  "require": {
+    "php": ">=8.0",
+    "ext-simplexml": "*",
+    "ext-libxml": "*",
+    "ext-fileinfo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Polyfill\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Polyfill\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit tests"
+  }
+}
