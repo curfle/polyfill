@@ -2,9 +2,9 @@
 
 namespace Polyfill\Auth;
 
-use Polyfill\Hash\Algorithm\HMAC;
+use Polyfill\Hash\HMAC;
 use Polyfill\Support\Exceptions\Auth\IncorrectJWTFormatException;
-use Polyfill\Support\Exceptions\Misc\SecretNotPresentException;
+use Polyfill\Support\Exceptions\Utilities\JSONException;
 use Polyfill\Support\Str;
 use Polyfill\Utilities\Base64;
 use Polyfill\Utilities\JSON;
@@ -12,16 +12,46 @@ use Polyfill\Utilities\JSON;
 class JWT
 {
     /**
+     * Holds the secret.
+     *
+     * @var string
+     */
+    protected static string $secret;
+
+    /**
+     * Sets the secret to be used as default.
+     *
+     * @param string $secret
+     */
+    public static function setSecret(string $secret)
+    {
+        self::$secret = $secret;
+    }
+
+    /**
+     * Returns the current secret.
+     *
+     * @return string
+     */
+    private static function getSecret(): string
+    {
+        return self::$secret;
+    }
+
+    /**
      * Generates a new JWT. Lives for 30 days by default.
      *
      * @param array $payload
-     * @param string $secret
+     * @param string|null $secret
      * @param int $lifetime
      * @param string $algorithm
      * @return string
      */
-    public static function generate(array $payload, string $secret, int $lifetime = 60 * 60 * 24 * 30, string $algorithm = "HS256"): string
+    public static function generate(array $payload, string $secret = null, int $lifetime = 60 * 60 * 24 * 30, string $algorithm = "HS256"): string
     {
+        // load secret if null
+        $secret ??= self::getSecret();
+
         // fill header
         $header = [
             "typ" => "JWT",
@@ -59,12 +89,16 @@ class JWT
      * Returns if a token is valid against the environment secret (and timestamp if available and wanted).
      *
      * @param string $token
-     * @param string $secret
+     * @param string|null $secret
      * @param bool $checkExpIfAvailable
      * @return bool
+     * @throws JSONException
      */
-    public static function valid(string $token, string $secret, bool $checkExpIfAvailable = true): bool
+    public static function valid(string $token, string $secret = null, bool $checkExpIfAvailable = true): bool
     {
+        // load secret if null
+        $secret ??= self::getSecret();
+
         // split the token
         [$header, $payload, $signature] = Str::split($token, ".");
 
@@ -94,7 +128,7 @@ class JWT
      *
      * @param string $token
      * @return array|null
-     * @throws IncorrectJWTFormatException
+     * @throws IncorrectJWTFormatException|JSONException
      */
     public static function decode(string $token): array|null
     {
@@ -114,7 +148,7 @@ class JWT
      *
      * @param string $token
      * @return array|null
-     * @throws IncorrectJWTFormatException
+     * @throws IncorrectJWTFormatException|JSONException
      */
     public static function decodeHeader(string $token): array|null
     {
