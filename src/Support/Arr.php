@@ -135,9 +135,9 @@ class Arr
      * @param array $array
      * @param callable $callback
      * @param mixed $initial
-     * @return array
+     * @return mixed
      */
-    public static function reduce(array $array, callable $callback, mixed $initial): array
+    public static function reduce(array $array, callable $callback, mixed $initial): mixed
     {
         return array_reduce($array, $callback, $initial);
     }
