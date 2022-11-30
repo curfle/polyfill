@@ -129,12 +129,12 @@ class Str
     /**
      * Returns the length of a string.
      *
-     * @param string $string
+     * @param string|null $string $string
      * @return int
      */
-    public static function length(string $string): int
+    public static function length(string|null $string): int
     {
-        return strlen($string);
+        return strlen($string ?? "");
     }
 
     /**
